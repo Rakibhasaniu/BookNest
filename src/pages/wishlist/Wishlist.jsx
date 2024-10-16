@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import useBooks from "../../hooks/useBooks";
 import { FaHeart } from "react-icons/fa";
+import { Link } from "react-router-dom"; // Import Link for navigation
 
 const Wishlist = () => {
-    const [books] = useBooks();
+    const [books,loading] = useBooks();
     const [wishlistBooks, setWishlistBooks] = useState([]);
+    if (loading) {
 
+        <p>Loading...</p>;
+    }
+       
     // Load wishlist from localStorage when the component mounts
     useEffect(() => {
         loadWishlist();
@@ -44,7 +49,15 @@ const Wishlist = () => {
             {wishlistBooks.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {wishlistBooks.map((book) => (
-                        <div key={book.id} className="border p-4 rounded-lg shadow hover:shadow-md transition duration-300">
+                        <div key={book.id} className="border p-4 rounded-lg shadow hover:shadow-md transition duration-300 relative">
+                            {/* Heart icon to indicate wishlist (placed at the top-right corner) */}
+                            <button 
+                                onClick={() => handleRemoveFromWishlist(book.id)} 
+                                className="absolute top-4 right-4"
+                            >
+                                <FaHeart className="text-red-500" size={24} />
+                            </button>
+
                             {/* Book Cover */}
                             <img 
                                 src={book.formats["image/jpeg"] || "https://via.placeholder.com/150"} 
@@ -60,15 +73,17 @@ const Wishlist = () => {
                             {/* ID */}
                             <p className="text-gray-400 text-sm">ID: {book.id}</p>
 
-                            {/* Heart icon to indicate wishlist */}
-                            <button onClick={() => handleRemoveFromWishlist(book.id)}>
-                                <FaHeart className="text-red-500" size={24} />
-                            </button>
+                            {/* Details Button */}
+                            <Link to={`/books/${book.id}`}>
+                                <button className="mt-4 p-2 bg-blue-500 text-white rounded-lg">
+                                    Details
+                                </button>
+                            </Link>
                         </div>
                     ))}
                 </div>
             ) : (
-                <p className="text-center">No books in your wishlist...</p>
+                <p className="text-center">Loading...</p>
             )}
         </div>
     );

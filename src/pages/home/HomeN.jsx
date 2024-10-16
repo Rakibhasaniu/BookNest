@@ -2,15 +2,21 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // Import Link from React Router
 import useBooks from "../../hooks/useBooks";
 import { FaHeart, FaRegHeart } from "react-icons/fa"; 
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const Home = () => {
-    const [books] = useBooks();
+    const [books, loading] = useBooks();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedGenre, setSelectedGenre] = useState("");
     const [genres, setGenres] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8;
-    const [wishlist, setWishlist] = useState([]); 
+    const [wishlist, setWishlist] = useState([]);
+
+    if (loading) {
+        <p>Loading...</p>;
+    }
 
     useEffect(() => {
         const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -25,12 +31,20 @@ const Home = () => {
     }, [books]);
 
     const handleWishlistToggle = (bookId) => {
-        const updatedWishlist = wishlist.includes(bookId)
+        const isInWishlist = wishlist.includes(bookId);
+        const updatedWishlist = isInWishlist
             ? wishlist.filter(id => id !== bookId) 
             : [...wishlist, bookId];
 
         setWishlist(updatedWishlist);
-        localStorage.setItem("wishlist", JSON.stringify(updatedWishlist)); 
+        localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+
+        // Display a toast notification
+        if (isInWishlist) {
+            toast.error("Removed from wishlist");
+        } else {
+            toast.success("Added to wishlist");
+        }
     };
 
     const filteredBooks = books?.results?.filter(book => {
@@ -135,6 +149,9 @@ const Home = () => {
                     Next
                 </button>
             </div>
+
+            {/* Toast Container */}
+            <ToastContainer />
         </div>
     );
 };
