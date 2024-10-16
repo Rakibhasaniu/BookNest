@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'; 
 import { motion } from "framer-motion";
 import { HeartIcon } from "../../components/HeartIcon/HeartIcon";
+import { Helmet } from "react-helmet-async";
 
 const Home = () => {
     const [books, loading] = useBooks();
@@ -59,6 +60,9 @@ const Home = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            <Helmet>
+                <title>BookNest| Home</title>
+            </Helmet>
             <ToastContainer />
             <h1 className="text-3xl font-bold text-center mb-8">Book List</h1>
 
@@ -89,7 +93,7 @@ const Home = () => {
                     {currentBooks.map((book) => (
                         <motion.div
                             key={book.id}
-                            className="border p-4 rounded-lg shadow hover:shadow-md transition duration-300 relative"
+                            className="border p-4 rounded-lg shadow hover:shadow-md transition duration-300 flex flex-col"
                             whileHover={{ scale: 1.05 }} 
                         >
                             <motion.img 
@@ -104,21 +108,17 @@ const Home = () => {
                             <p className="text-gray-500">Genre: {book.subjects && book.subjects.length > 0 ? book.subjects[0] : "N/A"}</p>
                             <p className="text-gray-400 text-sm">ID: {book.id}</p>
 
-                           
+                            <div className="flex-grow" /> {/* This creates space between content and button */}
                             <button
                                 onClick={() => handleWishlistToggle(book.id)}
-                                className="absolute top-4 right-4"
+                                className="top-4 right-4"
                             >
-                                {wishlist.includes(book.id) ? (
-                                    <HeartIcon isLiked={wishlist.includes(book.id)} /> 
-                                ) : (
-                                    <HeartIcon isLiked={wishlist.includes(book.id)} /> 
-                                )}
+                                <HeartIcon isLiked={wishlist.includes(book.id)} />
                             </button>
 
                             {/* Details Button */}
-                            <Link to={`/books/${book.id}`}>
-                                <button className="mt-4 p-2 bg-blue-500 text-white rounded-lg">
+                            <Link className="text-center" to={`/books/${book.id}`}>
+                                <button className="mt-4 py-2 px-6 hover:bg-gray-600 bg-blue-500 text-white rounded-lg">
                                     Details
                                 </button>
                             </Link>
@@ -133,7 +133,7 @@ const Home = () => {
                 <button
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
-                    className="mx-2 p-2 border rounded-lg shadow-md bg-blue-500 text-white disabled:bg-gray-300"
+                    className="mx-2 p-2 border hover:bg-gray-600 rounded-lg shadow-md bg-blue-500 text-white disabled:bg-gray-300"
                 >
                     Previous
                 </button>
@@ -142,7 +142,7 @@ const Home = () => {
                     <button
                         key={index}
                         onClick={() => setCurrentPage(index + 1)}
-                        className={`mx-1 p-2 border rounded-lg shadow-md ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white text-black'}`}
+                        className={`mx-1 p-2 border hover:bg-gray-600 rounded-lg shadow-md ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white text-black'}`}
                     >
                         {index + 1}
                     </button>
@@ -151,7 +151,7 @@ const Home = () => {
                 <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className="mx-2 p-2 border rounded-lg shadow-md bg-blue-500 text-white disabled:bg-gray-300"
+                    className="mx-2 p-2 px-6 border hover:bg-gray-600 rounded-lg shadow-md bg-blue-500 text-white disabled:bg-gray-300"
                 >
                     Next
                 </button>

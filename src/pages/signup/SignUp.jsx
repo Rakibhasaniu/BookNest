@@ -1,6 +1,7 @@
 import  { useContext, useState } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const SignUp = () => {
     const [name, setName] = useState("");
@@ -14,7 +15,6 @@ const SignUp = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Simple validation
         if (!name || !email || !password || !confirmPassword) {
             setError("All fields are required");
             return;
@@ -32,13 +32,13 @@ const SignUp = () => {
                 console.log(loggedUser);
                 navigate('/');
             })
-
-        // You can handle signup logic here (e.g., API call)
-        console.log( name, email, password );
     };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <Helmet>
+                <title>BookNest| Register</title>
+            </Helmet>
             <form
                 onSubmit={handleSubmit}
                 className="bg-white shadow-md rounded px-8 py-6 w-96"

@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify"; // Import toast and Toas
 import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
 import { motion } from "framer-motion"; // Import motion for animations
 import { HeartIcon } from "../../components/HeartIcon/HeartIcon";
+import { Helmet } from "react-helmet-async";
 
 const Wishlist = () => {
     const [books, loading] = useBooks(); // Fetch books using the custom hook
@@ -48,6 +49,9 @@ const Wishlist = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            <Helmet>
+                <title>BookNest | WishList</title>
+            </Helmet>
             <ToastContainer /> {/* Add ToastContainer here */}
             <h1 className="text-3xl font-bold text-center mb-8">Wishlist</h1>
 
@@ -56,8 +60,7 @@ const Wishlist = () => {
                     {currentBooks.map((book) => (
                         <motion.div
                             key={book.id}
-                            className="border p-4 rounded-lg shadow hover:shadow-md transition duration-300 relative"
-                            whileHover={{ scale: 1.05 }} // Add hover animation
+                            className="border p-4 rounded-lg shadow hover:shadow-md transition duration-300 relative flex flex-col" // Changed here
                         >
                             <motion.img 
                                 src={book.formats["image/jpeg"] || "https://via.placeholder.com/150"} 
@@ -71,17 +74,19 @@ const Wishlist = () => {
                             <p className="text-gray-500">Genre: {book.subjects && book.subjects.length > 0 ? book.subjects[0] : "N/A"}</p>
                             <p className="text-gray-400 text-sm">ID: {book.id}</p>
 
+                            <div className="flex-grow"></div> {/* Add this line to push the button down */}
+
                             {/* Wishlist Icon */}
                             <button
                                 onClick={() => handleWishlistToggle(book.id)}
-                                className="absolute top-4 right-4"
+                                className="absolute top-4 right-8"
                             >
-                               <HeartIcon isLiked={wishlist.includes(book.id)} />
+                                <HeartIcon isLiked={wishlist.includes(book.id)} />
                             </button>
 
                             {/* Details Button */}
-                            <Link to={`/books/${book.id}`}>
-                                <button className="mt-4 p-2 bg-blue-500 text-white rounded-lg">
+                            <Link className="text-center " to={`/books/${book.id}`}>
+                                <button className="mt-4 px-6 py-2 hover:bg-gray-600  bg-blue-500 text-white rounded-lg">
                                     Details
                                 </button>
                             </Link>
@@ -96,7 +101,7 @@ const Wishlist = () => {
                 <button
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
-                    className="mx-2 p-2 border rounded-lg shadow-md bg-blue-500 text-white disabled:bg-gray-300"
+                    className="mx-2 p-2 border hover:bg-gray-600 rounded-lg shadow-md bg-blue-500 text-white disabled:bg-gray-300"
                 >
                     Previous
                 </button>
@@ -105,7 +110,7 @@ const Wishlist = () => {
                     <button
                         key={index}
                         onClick={() => setCurrentPage(index + 1)}
-                        className={`mx-1 p-2 border rounded-lg shadow-md ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white text-black'}`}
+                        className={`mx-1 p-2 border hover:bg-gray-600 rounded-lg shadow-md ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white text-black'}`}
                     >
                         {index + 1}
                     </button>
@@ -114,7 +119,7 @@ const Wishlist = () => {
                 <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className="mx-2 p-2 border rounded-lg shadow-md bg-blue-500 text-white disabled:bg-gray-300"
+                    className="mx-2 p-2 border rounded-lg hover:bg-gray-600 shadow-md bg-blue-500 text-white disabled:bg-gray-300"
                 >
                     Next
                 </button>

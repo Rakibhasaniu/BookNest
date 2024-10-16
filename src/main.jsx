@@ -12,9 +12,9 @@ createRoot(document.getElementById('root')).render(
     <AuthProvider>
       <HelmetProvider>
 
-        <div>
+        
           <RouterProvider router={router} />
-        </div>
+        
       </HelmetProvider>
     </AuthProvider>
   </StrictMode>,

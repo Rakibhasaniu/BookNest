@@ -20,7 +20,8 @@ export const router = createBrowserRouter([
                 element:<HomeN />
             },
             {
-                path: '/books/:id',  // Dynamic route for the book details page
+                path: '/books/:id', 
+                // element: <BookDetails></BookDetails> 
                 element: <PrivateRoute> <BookDetails></BookDetails> </PrivateRoute>
             },
             {

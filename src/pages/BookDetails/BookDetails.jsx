@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useBooks from "../../hooks/useBooks";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 
 const BookDetails = () => {
     const { id } = useParams();
@@ -21,6 +22,9 @@ const BookDetails = () => {
 
     return (
         <section className="py-12">
+            <Helmet>
+                <title>BookNest| BookDetails</title>
+            </Helmet>
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <motion.div

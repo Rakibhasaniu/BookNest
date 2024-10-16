@@ -2,11 +2,12 @@ import  { useContext, useState } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { Helmet } from "react-helmet-async";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    const [error] = useState("");
 
     const {signIn} = useContext(AuthContext)
     const navigate = useNavigate();
@@ -39,6 +40,9 @@ const Login = () => {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <Helmet>
+                <title>BookNest| Login</title>
+            </Helmet>
             <form
                 onSubmit={handleSubmit}
                 className="bg-white shadow-md rounded px-8 py-6 w-96"
