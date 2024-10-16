@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Import Link from React Router
 import useBooks from "../../hooks/useBooks";
-import { FaHeart, FaRegHeart } from "react-icons/fa"; // Import heart icons
+import { FaHeart, FaRegHeart } from "react-icons/fa"; 
 
 const Home = () => {
     const [books] = useBooks();
@@ -9,16 +10,14 @@ const Home = () => {
     const [genres, setGenres] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8;
-    const [wishlist, setWishlist] = useState([]); // State for wishlist
+    const [wishlist, setWishlist] = useState([]); 
 
     useEffect(() => {
-        // Load wishlist from local storage
         const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
         setWishlist(storedWishlist);
     }, []);
 
     useEffect(() => {
-        // Extract unique genres from the book list
         if (books && books.results) {
             const allGenres = books.results.flatMap(book => book.subjects || []);
             setGenres([...new Set(allGenres)]);
@@ -26,14 +25,12 @@ const Home = () => {
     }, [books]);
 
     const handleWishlistToggle = (bookId) => {
-        console.log(bookId)
         const updatedWishlist = wishlist.includes(bookId)
-            ? wishlist.filter(id => id !== bookId) // Remove from wishlist
-            : [...wishlist, bookId]; // Add to wishlist
+            ? wishlist.filter(id => id !== bookId) 
+            : [...wishlist, bookId];
 
         setWishlist(updatedWishlist);
-        console.log(wishlist)
-        localStorage.setItem("wishlist", JSON.stringify(updatedWishlist)); // Update local storage
+        localStorage.setItem("wishlist", JSON.stringify(updatedWishlist)); 
     };
 
     const filteredBooks = books?.results?.filter(book => {
@@ -92,16 +89,23 @@ const Home = () => {
                                 className="absolute top-4 right-4"
                             >
                                 {wishlist.includes(book.id) ? (
-                                    <FaHeart className="text-red-500" /> // Filled heart for wishlisted
+                                    <FaHeart size={24} className="text-red-500" /> 
                                 ) : (
-                                    <FaRegHeart className="text-gray-400" /> // Outlined heart for non-wishlisted
+                                    <FaRegHeart size={24} className="text-gray-400" /> 
                                 )}
                             </button>
+
+                            {/* Details Button */}
+                            <Link to={`/books/${book.id}`}>
+                                <button className="mt-4 p-2 bg-blue-500 text-white rounded-lg">
+                                    Details
+                                </button>
+                            </Link>
                         </div>
                     ))}
                 </div>
             ) : (
-                <p className="text-center">No books found...</p>
+                <p className="text-center">Loading...</p>
             )}
 
             <div className="flex justify-center mt-8">

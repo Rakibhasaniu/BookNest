@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import useBooks from "../../hooks/useBooks"; // Reuse the hook to get the list of books
+import useBooks from "../../hooks/useBooks";
 import { FaHeart } from "react-icons/fa";
 
 const Wishlist = () => {
@@ -8,6 +8,11 @@ const Wishlist = () => {
 
     // Load wishlist from localStorage when the component mounts
     useEffect(() => {
+        loadWishlist();
+    }, [books]);
+
+    // Function to load wishlist books from localStorage
+    const loadWishlist = () => {
         const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
         // Filter the books that are in the wishlist
@@ -15,7 +20,21 @@ const Wishlist = () => {
             const filteredBooks = books.results.filter(book => storedWishlist.includes(book.id));
             setWishlistBooks(filteredBooks);
         }
-    }, [books]);
+    };
+
+    // Function to remove a book from the wishlist
+    const handleRemoveFromWishlist = (bookId) => {
+        const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+        // Remove the book ID from the wishlist array
+        const updatedWishlist = storedWishlist.filter(id => id !== bookId);
+
+        // Update localStorage
+        localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+
+        // Update state to reflect the removal
+        loadWishlist();
+    };
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -42,12 +61,14 @@ const Wishlist = () => {
                             <p className="text-gray-400 text-sm">ID: {book.id}</p>
 
                             {/* Heart icon to indicate wishlist */}
-                            <FaHeart className="text-red-500" />
+                            <button onClick={() => handleRemoveFromWishlist(book.id)}>
+                                <FaHeart className="text-red-500" size={24} />
+                            </button>
                         </div>
                     ))}
                 </div>
             ) : (
-                <p className="text-center">Loading...</p>
+                <p className="text-center">No books in your wishlist...</p>
             )}
         </div>
     );
