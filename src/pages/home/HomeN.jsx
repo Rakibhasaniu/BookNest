@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Import Link from React Router
+import { Link } from "react-router-dom"; 
 import useBooks from "../../hooks/useBooks";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { toast, ToastContainer } from "react-toastify"; // Import toast and ToastContainer
-import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
-import { motion } from "framer-motion"; // Import motion
+import { toast, ToastContainer } from "react-toastify"; 
+import 'react-toastify/dist/ReactToastify.css'; 
+import { motion } from "framer-motion";
+import { HeartIcon } from "../../components/HeartIcon/HeartIcon";
 
 const Home = () => {
     const [books, loading] = useBooks();
@@ -54,7 +54,7 @@ const Home = () => {
     const currentBooks = filteredBooks?.slice(startIndex, startIndex + itemsPerPage);
 
     if (loading) {
-        return <p className="text-center">Loading...</p>; // Return loading message if data is still loading
+        return <p className="text-center">Loading...</p>;
     }
 
     return (
@@ -90,29 +90,29 @@ const Home = () => {
                         <motion.div
                             key={book.id}
                             className="border p-4 rounded-lg shadow hover:shadow-md transition duration-300 relative"
-                            whileHover={{ scale: 1.05 }} // Add hover animation
+                            whileHover={{ scale: 1.05 }} 
                         >
                             <motion.img 
                                 src={book.formats["image/jpeg"] || "https://via.placeholder.com/150"} 
                                 alt={book.title} 
                                 className="h-48 w-full object-cover rounded-md mb-4"
-                                whileHover={{ scale: 1.1 }} // Zoom effect on hover
-                                transition={{ duration: 0.3 }} // Smooth transition
+                                whileHover={{ scale: 1.1 }} 
+                                transition={{ duration: 0.3 }} 
                             />
                             <h2 className="text-lg font-semibold">{book.title}</h2>
                             <p className="text-gray-600">by {book.authors.map((author) => author.name).join(", ")}</p>
                             <p className="text-gray-500">Genre: {book.subjects && book.subjects.length > 0 ? book.subjects[0] : "N/A"}</p>
                             <p className="text-gray-400 text-sm">ID: {book.id}</p>
 
-                            {/* Wishlist Icon */}
+                           
                             <button
                                 onClick={() => handleWishlistToggle(book.id)}
                                 className="absolute top-4 right-4"
                             >
                                 {wishlist.includes(book.id) ? (
-                                    <FaHeart size={24} className="text-red-500" /> 
+                                    <HeartIcon isLiked={wishlist.includes(book.id)} /> 
                                 ) : (
-                                    <FaRegHeart size={24} className="text-gray-400" /> 
+                                    <HeartIcon isLiked={wishlist.includes(book.id)} /> 
                                 )}
                             </button>
 

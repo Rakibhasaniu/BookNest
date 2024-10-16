@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // Import Link from React Router
 import useBooks from "../../hooks/useBooks"; // Custom hook to fetch books
-import { FaHeart } from "react-icons/fa"; // Wishlist icon
 import { toast, ToastContainer } from "react-toastify"; // Import toast and ToastContainer
 import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
 import { motion } from "framer-motion"; // Import motion for animations
+import { HeartIcon } from "../../components/HeartIcon/HeartIcon";
 
 const Wishlist = () => {
     const [books, loading] = useBooks(); // Fetch books using the custom hook
@@ -76,7 +76,7 @@ const Wishlist = () => {
                                 onClick={() => handleWishlistToggle(book.id)}
                                 className="absolute top-4 right-4"
                             >
-                                <FaHeart size={24} className="text-red-500" />
+                               <HeartIcon isLiked={wishlist.includes(book.id)} />
                             </button>
 
                             {/* Details Button */}

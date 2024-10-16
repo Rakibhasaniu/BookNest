@@ -23,7 +23,6 @@ const BookDetails = () => {
         <section className="py-12">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {/* Left column for book image with zoom effect */}
                     <motion.div
                         className="flex justify-center"
                         initial={{ opacity: 0, scale: 0.8 }}
@@ -32,10 +31,10 @@ const BookDetails = () => {
                     >
                         <motion.img
                             className="w-full h-96 object-cover rounded-xl shadow-lg"
-                            src={book.formats["image/jpeg"] || "https://via.placeholder.com/150"}
+                            src={book.formats["image/jpeg"]}
                             alt={book.title}
-                            whileHover={{ scale: 1.1 }} // Zoom effect on hover
-                            transition={{ type: "spring", stiffness: 300 }} // Spring effect
+                            whileHover={{ scale: 1.1 }} 
+                            transition={{ type: "spring", stiffness: 300 }} 
                         />
                     </motion.div>
 
@@ -64,9 +63,6 @@ const BookDetails = () => {
                         </p>
                         <h5 className="text-md">Book ID: {book.id}</h5>
                         <p className="text-md">Download Count: {book.download_count}</p>
-                        <p className="mt-4 text-base">
-                            Description: {book.description || "No description available."}
-                        </p>
 
                         <div className="flex space-x-4 mt-8">
                             <Link to="/">
@@ -81,8 +77,6 @@ const BookDetails = () => {
                                 </button>
                             </Link>
                         </div>
-
-                        {/* Display formats available for download */}
                         <div className="mt-6">
                             <h4 className="text-lg font-semibold">Available Formats:</h4>
                             <ul className="list-disc list-inside">
