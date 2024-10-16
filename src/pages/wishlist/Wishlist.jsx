@@ -1,77 +1,83 @@
-import { useEffect, useState } from "react";
-import useBooks from "../../hooks/useBooks";
-import { FaHeart } from "react-icons/fa";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Import Link from React Router
+import useBooks from "../../hooks/useBooks"; // Custom hook to fetch books
+import { FaHeart } from "react-icons/fa"; // Wishlist icon
+import { toast, ToastContainer } from "react-toastify"; // Import toast and ToastContainer
+import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
+import { motion } from "framer-motion"; // Import motion for animations
 
 const Wishlist = () => {
-    const [books,loading] = useBooks();
-    const [wishlistBooks, setWishlistBooks] = useState([]);
-    if (loading) {
+    const [books, loading] = useBooks(); // Fetch books using the custom hook
+    const [wishlist, setWishlist] = useState([]); // State for wishlist
+    const itemsPerPage = 8; // Items to display per page
+    const [currentPage, setCurrentPage] = useState(1); // Current page state
 
-        <p>Loading...</p>;
-    }
-       
-    // Load wishlist from localStorage when the component mounts
+    // Load the wishlist from local storage
     useEffect(() => {
-        loadWishlist();
-    }, [books]);
-
-    // Function to load wishlist books from localStorage
-    const loadWishlist = () => {
         const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+        setWishlist(storedWishlist);
+    }, []);
 
-        // Filter the books that are in the wishlist
-        if (books && books.results) {
-            const filteredBooks = books.results.filter(book => storedWishlist.includes(book.id));
-            setWishlistBooks(filteredBooks);
+    // Function to handle adding/removing books from wishlist
+    const handleWishlistToggle = (bookId) => {
+        const updatedWishlist = wishlist.includes(bookId)
+            ? wishlist.filter(id => id !== bookId)
+            : [...wishlist, bookId];
+
+        setWishlist(updatedWishlist);
+        localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+
+        // Show toast notification
+        if (wishlist.includes(bookId)) {
+            toast.success("Removed from wishlist!");
+        } else {
+            toast.success("Added to wishlist!");
         }
     };
 
-    // Function to remove a book from the wishlist
-    const handleRemoveFromWishlist = (bookId) => {
-        const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    // Filter books that are in the wishlist
+    const filteredBooks = books?.results?.filter(book => wishlist.includes(book.id));
 
-        // Remove the book ID from the wishlist array
-        const updatedWishlist = storedWishlist.filter(id => id !== bookId);
+    const totalPages = Math.ceil(filteredBooks?.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentBooks = filteredBooks?.slice(startIndex, startIndex + itemsPerPage);
 
-        // Update localStorage
-        localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
-
-        // Update state to reflect the removal
-        loadWishlist();
-    };
+    if (loading) {
+        return <p className="text-center">Loading...</p>; // Return loading message if data is still loading
+    }
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold text-center mb-8">My Wishlist</h1>
+            <ToastContainer /> {/* Add ToastContainer here */}
+            <h1 className="text-3xl font-bold text-center mb-8">Wishlist</h1>
 
-            {/* Check if wishlistBooks exist and has content */}
-            {wishlistBooks.length > 0 ? (
+            {currentBooks && currentBooks.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {wishlistBooks.map((book) => (
-                        <div key={book.id} className="border p-4 rounded-lg shadow hover:shadow-md transition duration-300 relative">
-                            {/* Heart icon to indicate wishlist (placed at the top-right corner) */}
-                            <button 
-                                onClick={() => handleRemoveFromWishlist(book.id)} 
-                                className="absolute top-4 right-4"
-                            >
-                                <FaHeart className="text-red-500" size={24} />
-                            </button>
-
-                            {/* Book Cover */}
-                            <img 
+                    {currentBooks.map((book) => (
+                        <motion.div
+                            key={book.id}
+                            className="border p-4 rounded-lg shadow hover:shadow-md transition duration-300 relative"
+                            whileHover={{ scale: 1.05 }} // Add hover animation
+                        >
+                            <motion.img 
                                 src={book.formats["image/jpeg"] || "https://via.placeholder.com/150"} 
                                 alt={book.title} 
-                                className="h-48 w-full object-cover rounded-md mb-4" 
+                                className="h-48 w-full object-cover rounded-md mb-4"
+                                whileHover={{ scale: 1.1 }} // Zoom effect on hover
+                                transition={{ duration: 0.3 }} // Smooth transition
                             />
-                            {/* Book Title */}
                             <h2 className="text-lg font-semibold">{book.title}</h2>
-                            {/* Author */}
                             <p className="text-gray-600">by {book.authors.map((author) => author.name).join(", ")}</p>
-                            {/* Genre */}
                             <p className="text-gray-500">Genre: {book.subjects && book.subjects.length > 0 ? book.subjects[0] : "N/A"}</p>
-                            {/* ID */}
                             <p className="text-gray-400 text-sm">ID: {book.id}</p>
+
+                            {/* Wishlist Icon */}
+                            <button
+                                onClick={() => handleWishlistToggle(book.id)}
+                                className="absolute top-4 right-4"
+                            >
+                                <FaHeart size={24} className="text-red-500" />
+                            </button>
 
                             {/* Details Button */}
                             <Link to={`/books/${book.id}`}>
@@ -79,12 +85,40 @@ const Wishlist = () => {
                                     Details
                                 </button>
                             </Link>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             ) : (
-                <p className="text-center">Loading...</p>
+                <p className="text-center">No books in your wishlist.</p>
             )}
+
+            <div className="flex justify-center mt-8">
+                <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="mx-2 p-2 border rounded-lg shadow-md bg-blue-500 text-white disabled:bg-gray-300"
+                >
+                    Previous
+                </button>
+
+                {Array.from({ length: totalPages }, (_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => setCurrentPage(index + 1)}
+                        className={`mx-1 p-2 border rounded-lg shadow-md ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white text-black'}`}
+                    >
+                        {index + 1}
+                    </button>
+                ))}
+
+                <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="mx-2 p-2 border rounded-lg shadow-md bg-blue-500 text-white disabled:bg-gray-300"
+                >
+                    Next
+                </button>
+            </div>
         </div>
     );
 };

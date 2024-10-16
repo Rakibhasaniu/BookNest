@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // Import Link from React Router
 import useBooks from "../../hooks/useBooks";
-import { FaHeart, FaRegHeart } from "react-icons/fa"; 
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { toast, ToastContainer } from "react-toastify"; // Import toast and ToastContainer
+import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
+import { motion } from "framer-motion"; // Import motion
 
 const Home = () => {
     const [books, loading] = useBooks();
@@ -13,10 +14,6 @@ const Home = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8;
     const [wishlist, setWishlist] = useState([]);
-
-    if (loading) {
-        <p>Loading...</p>;
-    }
 
     useEffect(() => {
         const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -31,19 +28,18 @@ const Home = () => {
     }, [books]);
 
     const handleWishlistToggle = (bookId) => {
-        const isInWishlist = wishlist.includes(bookId);
-        const updatedWishlist = isInWishlist
-            ? wishlist.filter(id => id !== bookId) 
+        const updatedWishlist = wishlist.includes(bookId)
+            ? wishlist.filter(id => id !== bookId)
             : [...wishlist, bookId];
 
         setWishlist(updatedWishlist);
         localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
 
-        // Display a toast notification
-        if (isInWishlist) {
-            toast.error("Removed from wishlist");
+        // Show toast notification
+        if (wishlist.includes(bookId)) {
+            toast.success("Removed from wishlist!");
         } else {
-            toast.success("Added to wishlist");
+            toast.success("Added to wishlist!");
         }
     };
 
@@ -57,8 +53,13 @@ const Home = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentBooks = filteredBooks?.slice(startIndex, startIndex + itemsPerPage);
 
+    if (loading) {
+        return <p className="text-center">Loading...</p>; // Return loading message if data is still loading
+    }
+
     return (
         <div className="container mx-auto px-4 py-8">
+            <ToastContainer />
             <h1 className="text-3xl font-bold text-center mb-8">Book List</h1>
 
             <div className="flex justify-between items-center mb-8">
@@ -86,11 +87,17 @@ const Home = () => {
             {currentBooks && currentBooks.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {currentBooks.map((book) => (
-                        <div key={book.id} className="border p-4 rounded-lg shadow hover:shadow-md transition duration-300 relative">
-                            <img 
+                        <motion.div
+                            key={book.id}
+                            className="border p-4 rounded-lg shadow hover:shadow-md transition duration-300 relative"
+                            whileHover={{ scale: 1.05 }} // Add hover animation
+                        >
+                            <motion.img 
                                 src={book.formats["image/jpeg"] || "https://via.placeholder.com/150"} 
                                 alt={book.title} 
-                                className="h-48 w-full object-cover rounded-md mb-4" 
+                                className="h-48 w-full object-cover rounded-md mb-4"
+                                whileHover={{ scale: 1.1 }} // Zoom effect on hover
+                                transition={{ duration: 0.3 }} // Smooth transition
                             />
                             <h2 className="text-lg font-semibold">{book.title}</h2>
                             <p className="text-gray-600">by {book.authors.map((author) => author.name).join(", ")}</p>
@@ -115,11 +122,11 @@ const Home = () => {
                                     Details
                                 </button>
                             </Link>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             ) : (
-                <p className="text-center">Loading...</p>
+                <p className="text-center">No books found.</p>
             )}
 
             <div className="flex justify-center mt-8">
@@ -149,9 +156,6 @@ const Home = () => {
                     Next
                 </button>
             </div>
-
-            {/* Toast Container */}
-            <ToastContainer />
         </div>
     );
 };
