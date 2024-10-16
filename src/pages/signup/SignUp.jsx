@@ -1,7 +1,6 @@
 import  { useContext, useState } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 
 const SignUp = () => {
     const [name, setName] = useState("");
@@ -10,7 +9,7 @@ const SignUp = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
 
-    const { createUser, updateUserProfile } = useContext(AuthContext);
+    const { createUser } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
@@ -26,7 +25,13 @@ const SignUp = () => {
         }
         setError("");
 
-        
+        createUser(email, password)
+            .then(result => {
+
+                const loggedUser = result.user;
+                console.log(loggedUser);
+                navigate('/');
+            })
 
         // You can handle signup logic here (e.g., API call)
         console.log( name, email, password );
